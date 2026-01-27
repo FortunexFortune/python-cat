@@ -1,5 +1,5 @@
 - name: Deploy Kubernetes manifests
-  hosts: minikube-cat
+  hosts: minikube_cat
   become: true
   become_user: ubuntu
 
@@ -9,11 +9,11 @@
         state: present
         src: "{{ item }}"
       loop:
-        - namespace.yaml
-        - redis-deployment.yaml
-        - redis-service.yaml
-        - python-cat-deployment.yaml
-        - python-cat-service.yaml
+        - ../../k8s/namespace.yaml
+        - ../../k8s/redis-deployment.yaml
+        - ../../k8s/redis-service.yaml
+        - ../../k8s/python-cat-deployment.yaml
+        - ../../k8s/python-cat-service.yaml
       loop_control:
         label: "{{ item }}"
 
