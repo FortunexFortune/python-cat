@@ -34,23 +34,8 @@ jobs:
           docker compose logs
           exit 1
 
-      - name: Create 3 quotes
-        run: |
-          curl -s http://localhost:8000/quote | jq '.'
-          curl -s http://localhost:8000/quote | jq '.'
-          curl -s http://localhost:8000/quote | jq '.'
-
-      - name: Verify quote count
-        run: |       
-          COUNT=$(curl -s http://localhost:8000/quotes | jq '.quotes | length')
-          
-          if [ "$COUNT" -ne 3 ]; then
-            echo "Expected 3 quotes, got $COUNT"
-            docker compose logs
-            exit 1
-          fi
-          
-          echo "✅ Smoke test passed! Successfully created and retrieved 3 quotes."
+      - name: Run smoke test
+        run: bash smoke_test.sh
 
       - name: Cleanup
         if: always()
