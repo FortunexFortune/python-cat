@@ -28,13 +28,3 @@
         - /tmp/k8s-manifests/python-cat-service.yaml
       loop_control:
         label: "{{ item }}"
-
-    - name: Create GHCR imagePullSecret
-      ansible.builtin.shell: |
-        kubectl create secret docker-registry   \
-          --docker-server=ghcr.io \
-          --docker-username="{{ lookup('ansible.builtin.env', 'GHCR_USERNAME') }}" \
-          --docker-password="{{ lookup('ansible.builtin.env', 'GHCR_TOKEN') }}" \
-          --docker-email="unused@example.com" \
-          --namespace python-cat \
-          --dry-run=client -o yaml | kubectl apply -f -
