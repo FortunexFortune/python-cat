@@ -38,13 +38,13 @@ jobs:
         run: |
           echo "Creating 3 quotes..."
           for i in 1 2 3; do
-            RESPONSE=$(curl -s http://localhost:8000/quote)
+            RESPONSE=$(curl -sf http://localhost:8000/quote || (echo "Failed to create quote $i"; docker compose logs; exit 1))
             echo "Quote $i: $RESPONSE"
           done
 
       - name: Verify quote count
         run: |
-          RESPONSE=$(curl -s http://localhost:8000/quotes)
+          RESPONSE=$(curl -sf http://localhost:8000/quotes || (echo "Failed to fetch quotes"; docker compose logs; exit 1))
           echo "All quotes: $RESPONSE"
           
           COUNT=$(echo $RESPONSE | jq '.quotes | length')
