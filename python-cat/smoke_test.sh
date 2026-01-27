@@ -8,10 +8,14 @@ curl -s http://localhost:8000/quote | jq '.'
 
 echo ""
 echo "Verifying quote count..."
-COUNT=$(curl -s http://localhost:8000/quotes | jq '.quotes | length')
+RESPONSE=$(curl -s http://localhost:8000/quotes)
+echo "Response: $RESPONSE"
 
-if [ "$COUNT" -ne 3 ]; then
-  echo "Expected 3 quotes, got $COUNT"
+COUNT=$(echo "$RESPONSE" | jq '.quotes | length')
+echo "Quote count: $COUNT"
+
+if [ -z "$COUNT" ] || [ "$COUNT" != "3" ]; then
+  echo "Expected 3 quotes, got '$COUNT'"
   docker compose logs
   exit 1
 fi
