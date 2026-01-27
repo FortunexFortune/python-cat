@@ -2,3 +2,39 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: python-cat
+---
+# Limits the total resources that can be consumed by all pods in the namespace
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: python-cat-quota
+  namespace: python-cat
+spec:
+  hard:
+    requests.cpu: "1200m"
+    requests.memory: 2Gi
+    limits.cpu: "1800m"
+    limits.memory: 3Gi
+    pods: "6"
+---
+# Sets boundaries and defaults for individual containers/pods
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: python-cat-limits
+  namespace: python-cat
+spec:
+  limits:
+  - max:
+      cpu: "1"
+      memory: 1Gi
+    min:
+      cpu: "100m"
+      memory: 128Mi
+    default:
+      cpu: "500m"
+      memory: 512Mi
+    defaultRequest:
+      cpu: "250m"
+      memory: 256Mi
+    type: Container
