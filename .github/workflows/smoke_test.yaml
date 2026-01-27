@@ -1,0 +1,65 @@
+# Mini integration test
+name: Smoke test
+
+on:
+  push:
+    paths:
+      - 'python-cat/**'
+    branches:
+      - feature/**
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./python-cat
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Start services with docker compose
+        run: docker compose up -d --build
+        
+      - name: Wait for services to be healthy
+        run: |
+          echo "Waiting for services to be healthy..."
+          for i in {1..30}; do
+            if docker compose ps | grep -q "healthy"; then
+              docker compose ps
+              echo "Services are healthy"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Services did not become healthy in time"
+          docker compose logs
+          exit 1
+
+      - name: Create 3 quotes
+        run: |
+          echo "Creating 3 quotes..."
+          for i in 1 2 3; do
+            RESPONSE=$(curl -s http://localhost:8000/quote)
+            echo "Quote $i: $RESPONSE"
+          done
+
+      - name: Verify quote count
+        run: |
+          RESPONSE=$(curl -s http://localhost:8000/quotes)
+          echo "All quotes: $RESPONSE"
+          
+          COUNT=$(echo $RESPONSE | jq '.quotes | length')
+          echo "Quote count: $COUNT"
+          
+          if [ "$COUNT" -ne 3 ]; then
+            echo "Expected 3 quotes, got $COUNT"
+            docker compose logs
+            exit 1
+          fi
+          
+          echo "✅ Smoke test passed! Successfully created and retrieved 3 quotes."
+
+      - name: Cleanup
+        if: always()
+        run: docker compose down -v
