@@ -1,0 +1,28 @@
+- name: Deploy Kubernetes manifests
+  hosts: minikube
+  become: true
+  become_user: ubuntu
+
+  tasks:
+    - name: Apply Kubernetes manifests
+      kubernetes.core.k8s:
+        state: present
+        src: "{{ item }}"
+      loop:
+        - namespace.yaml
+        - redis-deployment.yaml
+        - redis-service.yaml
+        - python-cat-deployment.yaml
+        - python-cat-service.yaml
+      loop_control:
+        label: "{{ item }}"
+
+    - name: Create GHCR imagePullSecret
+      ansible.builtin.shell: |
+        kubectl create secret docker-registry ghcr-secret \
+          --docker-server=ghcr.io \
+          --docker-username="{{ lookup('ansible.builtin.env', 'GHCR_USERNAME') }}" \
+          --docker-password="{{ lookup('ansible.builtin.env', 'GHCR_TOKEN') }}" \
+          --docker-email="unused@example.com" \
+          --namespace python-cat \
+          --dry-run=client -o yaml | kubectl apply -f -

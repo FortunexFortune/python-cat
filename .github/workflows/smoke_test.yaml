@@ -1,0 +1,42 @@
+# Mini integration test
+name: Smoke test
+
+on:
+  push:
+    branches:
+      - feature/**
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./python-cat
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Start services with docker compose
+        run: docker compose up -d --build
+        
+      - name: Wait for services to be healthy
+        run: |
+          echo "Waiting for services to be healthy..."
+          for i in {1..30}; do
+            if docker compose ps | grep -q "healthy"; then
+              docker compose ps
+              echo "Services are healthy"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Services did not become healthy in time"
+          docker compose logs
+          exit 1
+
+      - name: Run smoke test
+        run: bash smoke_test.sh
+
+      - name: Cleanup
+        if: always()
+        run: docker compose down -v

@@ -1,0 +1,14 @@
+plugin: amazon.aws.aws_ec2
+regions:
+  - eu-west-1
+strict: False
+keyed_groups:
+  - key: tags.Name
+    prefix: ''
+    separator: ''
+hostnames:
+  - instance-id
+filters:
+  instance-state-name: running
+  tag:Name:
+    - minikube-cat
