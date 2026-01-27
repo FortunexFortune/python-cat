@@ -2,12 +2,12 @@
   hosts: minikube_cat
   become: true
   become_user: ubuntu
-
   tasks:
-    - name: Apply Kubernetes manifests
-      kubernetes.core.k8s:
-        state: present
+    - name: Copy Kubernetes manifests to remote host
+      ansible.builtin.copy:
         src: "{{ item }}"
+        dest: "/tmp/k8s-manifests/"
+        mode: '0644'
       loop:
         - ../../k8s/namespace.yaml
         - ../../k8s/redis-deployment.yaml
@@ -17,9 +17,21 @@
       loop_control:
         label: "{{ item }}"
 
+    - name: Apply Kubernetes manifests
+      ansible.builtin.shell: |
+        kubectl apply -f {{ item }}
+      loop:
+        - /tmp/k8s-manifests/namespace.yaml
+        - /tmp/k8s-manifests/redis-deployment.yaml
+        - /tmp/k8s-manifests/redis-service.yaml
+        - /tmp/k8s-manifests/python-cat-deployment.yaml
+        - /tmp/k8s-manifests/python-cat-service.yaml
+      loop_control:
+        label: "{{ item }}"
+
     - name: Create GHCR imagePullSecret
       ansible.builtin.shell: |
-        kubectl create secret docker-registry ghcr-secret \
+        kubectl create secret docker-registry   \
           --docker-server=ghcr.io \
           --docker-username="{{ lookup('ansible.builtin.env', 'GHCR_USERNAME') }}" \
           --docker-password="{{ lookup('ansible.builtin.env', 'GHCR_TOKEN') }}" \
