@@ -6,7 +6,7 @@ package_upgrade: true
 users:
   - name: ubuntu
     ssh-authorized-keys:
-      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINBBk1Up63rKI7Nefg+PPw/ajcMuZxyNNnXd5PcN2Uod
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDRbpzJj1G8M3MbHiG2JEUT8JRO7UEs8HthdzeEN12t4wqmHc+JfI7fDzWtp3LnCmIxFqONVWFDnGayN1HW15SODpVFIBam/7nP4YjGtc6feJkJgh1HpW5cKiHlqfQXtMXyvhWUEje7Q37ggj5eZrf3Tlvi2mAuLSi0KSx/wS642dovUg+i00ks82hdiNi3XZQHdfUjzREmID6vFQNz5byaLaZwalUJUr4lZZplFwQIUDYKKccAalRVw8JqDpWt2qj8nDlAWID41JevFNuhVV+TjUy49uZhBvBod86jlPEM78sjla3ixkVAIQRcWVYLTJwFFWNVtxnGpYmiYV0+G+tt8wCXC5SyeBGaD6RtIs8lu7bRas7WIweIgLS41ZJ1zVjISkSy79ckwQ4/PofnxWHuwhHvQ8R0qUZlyrh4vSNzgUrY7NT1ZCurDB3bOlRu4m7YwEKulxS/QAx+lzdx4DfCnknkg5nzS2O4V9CBrLaCqe3DT9dnmJOczecROqgusT5lPbPMZdNLeAgd4PBV9GyAEc5FUJ3QJXIi4/k9JMKBTfZezB19l7SXM6uvbOFwcQxWRZJXv7v+x/ku+96kzEX2zi18HL4QbuD4uuYl60vtzTU5a7hY1b19G9cgATEeN5QT6rTm1PYvoTi/+0u7f9WiqrpR8VsprOly9SrWlhO6dQ== osado@LAPTOP-A2V497JA
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: users, admin, docker
     shell: /bin/bash
