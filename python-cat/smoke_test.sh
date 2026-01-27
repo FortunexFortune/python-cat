@@ -19,9 +19,9 @@ fi
 
 echo ""
 echo "Creating 3 quotes..."
-curl -s http://localhost:8000/quote | jq '.'
-curl -s http://localhost:8000/quote | jq '.'
-curl -s http://localhost:8000/quote | jq '.'
+curl -s http://localhost:8000/quote | jq '.[]'
+curl -s http://localhost:8000/quote | jq '.[]'
+curl -s http://localhost:8000/quote | jq '.[]'
 
 echo ""
 echo "Verifying quote count..."
