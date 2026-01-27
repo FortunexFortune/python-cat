@@ -2,11 +2,6 @@ name: Deploy to Minikube on EC2 via SSM
 
 on:
   workflow_dispatch:
-    inputs:
-      chart_version:
-        description: 'Helm Chart Version'
-        required: true
-
 
 permissions:
   id-token: write
@@ -73,9 +68,4 @@ jobs:
           GHCR_USERNAME: FortunexFortune
           GHCR_TOKEN: ${{ secrets.GHA_PACKAGES }}
         run: |
-          ansible-playbook -i aws_ec2.yml site.yml --private-key private_key.pem -u ${{ env.ANSIBLE_USER }} \
-            --extra-vars "chart_version=${{ github.event.inputs.chart_version }}" 
-
-          # ansible-playbook -i aws_ec2.yml site.yml --private-key private_key.pem -u ${{ env.ANSIBLE_USER }} \
-          #   --extra-vars "chart_version=${{ github.event.inputs.chart_version }}" /
-          #    --extra-vars "app_version=${{ github.event.inputs.app_version }}"
+          ansible-playbook -i aws_ec2.yml site.yml --private-key private_key.pem -u ${{ env.ANSIBLE_USER }} 
