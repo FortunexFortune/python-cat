@@ -3,6 +3,12 @@
   become: true
   become_user: ubuntu
   tasks:
+    - name: Ensure k8s-manifests directory exists
+      ansible.builtin.file:
+        path: "/tmp/k8s-manifests"
+        state: directory
+        mode: '0755'
+
     - name: Copy Kubernetes manifests to remote host
       ansible.builtin.copy:
         src: "{{ item }}"
@@ -18,8 +24,8 @@
         label: "{{ item }}"
 
     - name: Apply Kubernetes manifests
-      ansible.builtin.shell: |
-        kubectl apply -f {{ item }}
+      ansible.builtin.command:
+        cmd: kubectl apply -f {{ item }}
       loop:
         - /tmp/k8s-manifests/namespace.yaml
         - /tmp/k8s-manifests/redis-deployment.yaml
@@ -28,3 +34,5 @@
         - /tmp/k8s-manifests/python-cat-service.yaml
       loop_control:
         label: "{{ item }}"
+      register: kubectl_apply_result
+      changed_when: "'configured' in kubectl_apply_result.stdout or 'created' in kubectl_apply_result.stdout"
