@@ -2,6 +2,8 @@
   hosts: minikube_cat
   become: true
   become_user: ubuntu
+  vars:
+    EXTRA_KUBECTL_ARGS: "{{ lookup('env', 'EXTRA_KUBECTL_ARGS') | default('') }}"
   tasks:
     - name: Copy Kubernetes manifests to remote host
       ansible.builtin.copy:
@@ -19,7 +21,7 @@
 
     - name: Apply Kubernetes manifests
       ansible.builtin.shell: |
-        kubectl apply -f {{ item }}
+        kubectl apply -f {{ item }} {{ EXTRA_KUBECTL_ARGS }}
       loop:
         - /tmp/k8s-manifests/namespace.yaml
         - /tmp/k8s-manifests/redis-deployment.yaml
@@ -28,3 +30,8 @@
         - /tmp/k8s-manifests/python-cat-service.yaml
       loop_control:
         label: "{{ item }}"
+      register: kubectl_apply_result
+
+    - name: Display kubectl apply results
+      ansible.builtin.debug:
+        msg: "{{ kubectl_apply_result.results | map(attribute='stdout') | list }}"

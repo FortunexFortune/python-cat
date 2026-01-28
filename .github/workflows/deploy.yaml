@@ -76,6 +76,7 @@ jobs:
           ANSIBLE_HOST_KEY_CHECKING: False
           GHCR_USERNAME: FortunexFortune
           GHCR_TOKEN: ${{ secrets.GHA_PACKAGES }}
+          EXTRA_KUBECTL_ARGS: "--dry-run=server"
         run: |
           ansible-playbook -i aws_ec2.yml site.yml --private-key private_key.pem -u ${{ env.ANSIBLE_USER }} --check
 
@@ -141,5 +142,6 @@ jobs:
           ANSIBLE_HOST_KEY_CHECKING: False
           GHCR_USERNAME: FortunexFortune
           GHCR_TOKEN: ${{ secrets.GHA_PACKAGES }}
+          EXTRA_KUBECTL_ARGS: ""
         run: |
           ansible-playbook -i aws_ec2.yml site.yml --private-key private_key.pem -u ${{ env.ANSIBLE_USER }} 
